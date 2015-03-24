@@ -68,10 +68,3 @@ p{
 
 /*------------svg-----------------*/
 
-.canvas .line{
-    fill:none;
-}
-.canvas .country .line{
-    stroke:rgb(80,80,80);
-    stroke-width:2px;
-}
