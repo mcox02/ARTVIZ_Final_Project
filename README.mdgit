@@ -1,0 +1,1 @@
+# ARTVIZ_Final_Project  initgit add README.mdgit commit -m "first commit"git remote add origin https://github.com/mcox02/ARTVIZ_Final_Project.gitgit push -u origin master
