@@ -1,1 +1,7 @@
-# ARTVIZ_Final_Project  initgit add README.mdgit commit -m "first commit"git remote add origin https://github.com/mcox02/ARTVIZ_Final_Project.gitgit push -u origin master
+Matthew Cox's final project for ARTG5330 - Data Visualization and Technology.
+		Teacher: Siqi Zhu
+		Final Due Date: April 23, 2015
+
+Data is freely pulled with thanks from hockey-reference.com (http://www.hockey-reference.com/leagues/) 
+		and the Hockey Databank project (https://groups.yahoo.com/neo/groups/hockey-databank/info).
+		
