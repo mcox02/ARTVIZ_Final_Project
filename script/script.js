@@ -18,7 +18,7 @@ var yVariable = "GF",
         y0 = 1964,
         y1 = 2004;
 
-var radius = Math.min(25, 300);
+var radius = Math.min(width/2, height/2);
 
 
 //Scales
@@ -54,27 +54,39 @@ var scaleY = d3.scale.sqrt()
 
 //START!
 queue()
-    .defer(d3.csv, "DataSheets/IndividualYears/leagues_NHL_2004_teams.csv",parse)
-    .defer(d3.csv, "DataSheets/IndividualYears/leagues_NHL_1964_teams.csv",parse)
+    .defer(d3.csv, "DataSheets/Teams_Everything.csv",parse)
+    .defer(d3.tsv, "DataSheets/Teams_Metadata.txt",parseMetaData)
     .await(dataLoaded);
 
 
-function dataLoaded(err, rows0){
+function dataLoaded(err, rows, rows0){
 
- scaleX.domain( d3.extent(rows0,function(d){ return d.goalsFor; }));
- scaleY.domain( d3.extent(rows0, function(d){ return d.wins; }));
+scaleX.domain([0,width]);
+scaleY.domain([0,height]);
 
-    var rows0 = d3.nest()
+//( d3.sum(rows0,function(d){ return d.goalsFor; }))]
+//( d3.sum(rows0, function(d){ return d.wins; }))]
+console.log(rows, rows0);
+    var rows = d3.nest()
+        .key(function(d){
+            return d.era;
+        })
+                .key(function(d){
+            return d.year;
+        })
         .key(function(d){
             return d.conference;
         })
-        .entries(rows0);
+                .key(function(d){
+            return d.division;
+        })
+        .entries(rows);
 
     var root = {
-        key:"conference",
-        values: rows0
+        key:"era",
+        values: rows
     };
-console.log(rows0);
+
 console.log(root);
 
     draw(root);
@@ -99,20 +111,29 @@ function draw(root){
 }
 
 function parse(d){
-    if(d.Team && d.GF){
         return {
-            team: d.Team,
-            goalsFor: +d.GF,
-            wins: +d.W,
-            goalsAgainst: +d.GA,
+            era: d.Era,
+            year: d.Year,
+            team: d.TeamName,
             conference: d.Conference,
-
-            }
-    }else{
-        return;
-    }
+            division: d.Division,
+            wins: +d.Wins,
+            goalsFor: +d.GF,
+            goalsAgainst: +d.GA,
+            penaltyMinutes: +d.PIM,
+/*            powerPlayPercent: +d."PP%",
+            penaltyKillPercent: +d."PK%",*/
+    };
 
 }
 
+function parseMetaData(d){
+    return {
+        team: d.TeamName,
+        teamAbbrv: d.teamAbbreviation,
+        primaryColor: d.primaryColor,
+        secondaryColor: d.secondaryColor,
+    }
+}
 
 
