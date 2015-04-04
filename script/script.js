@@ -14,11 +14,8 @@ var svg = d3.select('.canvas')
 
 
 //Global Variables
-var yVariable = "GF",
-        y0 = 1964,
-        y1 = 2004;
 
-var radius = Math.min(width/2, height/2);
+var radius = Math.min(width, height) / 2;
 
 
 //Scales
@@ -29,7 +26,8 @@ var scaleY = d3.scale.sqrt()
     .range([0,radius]);
 
 //d3 map
- var map = d3.map();
+ var map = d3.map(),
+     metaDataMap = d3.map();
 
 //arc generator
     var arc = d3.svg.arc()
@@ -58,15 +56,46 @@ queue()
     .defer(d3.tsv, "DataSheets/Teams_Metadata.txt",parseMetaData)
     .await(dataLoaded);
 
+function parse(d){
+        return {
+            era: d.Era,
+            year: d.Year,
+            team: d.TeamName,
+            conference: d.Conference,
+            division: d.Division,
+            wins: +d.Wins,
+            goalsFor: +d.GF,
+            goalsAgainst: +d.GA,
+            penaltyMinutes: +d.PIM,
+            powerPlayPercent: d["PP%"],
+            penaltyKillPercent: d["PK%"],
+       };
+
+};
+
+function parseMetaData(d){
+//     console.log(d.teamName,d.primaryColor);
+
+    var team = d.teamName;
+      
+    var teamInfo ={
+
+            teamAbrrv: d.teamAbbreviation,
+            teamPrimaryColor: d.primaryColor,
+            teamSecondaryColor: d.secondaryColor
+    };
+    
+    metaDataMap.set(team, teamInfo);
+};
+
+
 
 function dataLoaded(err, rows, rows0){
 
 scaleX.domain([0,width]);
 scaleY.domain([0,height]);
 
-//( d3.sum(rows0,function(d){ return d.goalsFor; }))]
-//( d3.sum(rows0, function(d){ return d.wins; }))]
-console.log(rows, rows0);
+//console.log(rows, rows0);
     var rows = d3.nest()
         .key(function(d){
             return d.era;
@@ -83,57 +112,88 @@ console.log(rows, rows0);
         .entries(rows);
 
     var root = {
-        key:"era",
+        key:"NHL",
         values: rows
     };
 
-console.log(root);
+//console.log(root);
 
     draw(root);
 
 }
 
 function draw(root){
-    svg.append('g')
-        .attr ('transform','translate('+width/2+','+height/2+')')
+  var slice = svg
         .selectAll('.slice')
-        .data(sunburst(root))
+        .data(sunburst.nodes(root))
         .enter()
         .append('path')
         .attr('class','slice')
+        .attr ('transform','translate('+width/2+','+height/2+')')
         .attr('d', function(d){
             return arc(d);
         })
-        .style('fill', 'gray')
-        .style('stroke','green')
-        .style('stroke-width','2px')
-        .style('fill-opacity','.25');
+        .style('fill',function(d){
+            var team = (metaDataMap.get(d.team))
+
+            if (!team) {return 'gray'}
+            else {return ( 'rgb(' + (team.teamPrimaryColor) + ')')}
+        })
+        .style('stroke',function(d){
+            var team = (metaDataMap.get(d.team))
+
+            if (!team) {return 'green'}
+            else {return ( 'rgb(' + (team.teamSecondaryColor) + ')')}
+        })
+        .style('stroke-width','.5px')
+        .on('click',click);
+
+    slice.each(function(d){
+            if(!d.children){
+                d3.select(this).append('text')
+                    .text(d.team)
+                    .attr('x', d.x)
+                    .attr('y', d.y)
+                    .attr('text-anchor','middle')
+                    .style('color','black');
+                    //.style('font-size','50%')
+                };
+            });
+
+
+        //.style('fill-opacity','.25');
+    
+
+
+    function click (d){
+    slice.transition()
+        .duration(1500)
+        .attrTween('d',arcTween(d));
+    }
+
+
 }
 
-function parse(d){
-        return {
-            era: d.Era,
-            year: d.Year,
-            team: d.TeamName,
-            conference: d.Conference,
-            division: d.Division,
-            wins: +d.Wins,
-            goalsFor: +d.GF,
-            goalsAgainst: +d.GA,
-            penaltyMinutes: +d.PIM,
-/*            powerPlayPercent: +d."PP%",
-            penaltyKillPercent: +d."PK%",*/
+
+
+function arcTween(d){
+
+    var xd = d3.interpolate(scaleX.domain(), [d.x, d.x + d.dx]),
+        yd = d3.interpolate(scaleY.domain(), [d.y, 1]),
+        yr = d3.interpolate(scaleY.range(), [ d.y ? 150 : 0 , radius]);
+
+    return function(d,i){
+        return i 
+            ? function (t){ return arc(d);}
+            : function (t){ 
+                scaleX.domain(xd(t));
+                scaleY.domain(yd(t));
+                scaleY.range(yr(t));
+                return arc (d);
+            };
     };
 
 }
 
-function parseMetaData(d){
-    return {
-        team: d.TeamName,
-        teamAbbrv: d.teamAbbreviation,
-        primaryColor: d.primaryColor,
-        secondaryColor: d.secondaryColor,
-    }
-}
 
 
