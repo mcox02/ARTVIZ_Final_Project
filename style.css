@@ -2,52 +2,98 @@ html,body,h1,h2,h3,h4,p,div,ul,li,svg{
 	margin:0;
 	padding:0;
 	font-size:100%;
+	list-style: none;
 }
 
 /*------------Structure-------------*/
-html,body{
+body{
+	width: 100%;
 	height: 100%;
-	position: relative;
-	background: rgb(250,250,250);
+	background: rgb(110,110,110);
+	color:#fff;
+	padding:0;
+	margin:0;
 }
 .container{
     width:1170px;
-    margin:auto;
+    margin:0 auto;
+    padding:0;
 }
-.container .canvas{
-	width:100%;
-	height: 700px;
-	position: relative;
+.title{
+	width: 100%;
+	height: 5%;
+	float: left;
+	padding: 10px 0 10px 15px;
 }
 
+.nav-bar{
+	width: 100%;
+	border-top:2px solid #ccc;
+	border-bottom:2px solid #ccc;
+	height:50px;
+	padding: 0px 10px 0px 15px;
+	float: left;
+}
+	.nav-bar ul{
+		height:100%; /* inherits 50px */
+	}
+		.nav-bar ul li{
+			width:150px;
+			height:100%; /* inherits 50px */
+			float:left;
+			line-height:50px;
+			text-align: center;
+		}
+.content {
+	top: 130px;
+
+}
+	.content .canvas{
+		width:70%;
+		height: 700px;
+		top: inherit;
+		position: relative;
+	}
+	.content .tooltip{
+		width: 28%;
+		height:700px;
+		float: right;
+		position: relative;
+		top:-570px;
+		opacity:1;
+		visibility: hidden;
+		color: #fff;
+	}
 
 /*------------font-------------*/
 body{
 	font-family:Helvetica,Arial,sans-serif;
 	font-size: 16px;
-    color:rgb(50,50,50);
+    color:#fff;
+}
+a{
+	color:#fff;
+	text-decoration: none;
 }
 h1{
 	font-size: 2em;
-	margin: 30px 0 30px;
+	font-style: rgb(250,250,250);
+	color: white;
 }
 h2{
 	font-size:1.5em;
 	margin: 0 0 20px;
+
+}
+h3{
+	font-size: :1em;
+	margin: 0;
 }
 p{
     margin: 0 0 20px;
 }
 
-/*------------tooltip-------------*/
-.tooltip{
-	width: 150px;
-	padding: 15px;
-	background: yellow;
-	position: absolute;
-	top:0;
-	opacity:0;
-}
+
 
 /*-----------control--------------*/
 .control .button{
@@ -67,135 +113,6 @@ p{
 }
 
 /*------------svg-----------------*/
-
-/*------------teams---------------*/
-/*
-.sj {
-	background: rgb(102,152,158);
-
-}
-
-.colo {
-	background: rgb(182,102,158);
-}
-
-.chi {
-	background: rgb(38,34,35);
-}
-
-.stl {
-	background: rgb(2,47,97);
-}
-
-.bos {
-	background: rgb(255,194,48);
-}
-
-.lak {
-	background: rgb(170,172,175);
-}
-
-.ana {
-	background: rgb(216,159,3);
-}
-
-.pit {
-	background: rgb(233,219,174);
-}
-
-.ari {
-	background: rgb(152,1,46);
-}
-
-.min {
-	background: rgb(0,80,48);
-}
-
-.det {
-	background: rgb(229,25,55);
-}
-
-.mon {
-	background: rgb(193,6,38);
-}
-
-.tb {
-	background: rgb(0,62,126);
-}
-
-.van {
-	background: rgb(0,45,86);
-}
-
-.dal {
-	background: rgb(0,111,73)
-}
-
-.tor {
-	background: rgb(0,62,126)
-}
-
-.was {
-	background: rgb(229,23,53);
-}
-
-.nas {
-	background: rgb(0,45,98);
-}
-
-.win {
-	background: rgb(0,43,97);
-}
-
-.nyr {
-	background: rgb(0,85,167);
-}
-
-.car {
-	background: rgb(235,22,53);
-}
-
-.nj {
-	background: rgb(231,24,54);
-}
-
-.phi {
-	background: rgb(243,119,54);
-}
-
-.ott {
-	background: rgb(216,161,13);
-}
-
-.col {
-	background: rgb(0,45,98);
-}
-
-.cal {
-	background: rgb(229,25,55);
-}
-
-.nyi {
-	background: rgb(255,126,36);
-}
-
-.edm {
-	background: rgb(0,59,124);
-}
-
-.fla {
-	background: rgb(241,29,58);
-}
-
-.buf {
-	background: rgb(0,44,98);
-}
-*/
-
-
-
-
-
 
 
 

@@ -1,5 +1,5 @@
 //Set up Canvas
-var margin = {t:100,r:50,b:200,l:50},
+var margin = {t:0,r:0,b:0,l:0},
 	width = $('.canvas').width() - margin.l - margin.r,
 	height = $('.canvas').height() - margin.t - margin.b,
 	radius = Math.min(width,height)/2,
@@ -13,12 +13,14 @@ var margin = {t:100,r:50,b:200,l:50},
 var svg = d3.select('.canvas')
 	.append('svg')
 	.attr('width', width + margin.l + margin.r)
-    .attr('height', height + margin.t + margin.b)
-    .append('g')
-    .attr('transform','translate('+margin.l+','+margin.t+')');
+  .attr('height', height + margin.t + margin.b)
+  .append('g')
+  .attr('transform','translate('+margin.l+','+margin.t+')');
 
 var map = d3.map(),
 	metaDataMap = d3.map();
+
+var customTooltip = d3.select('.tooltip');
 
 
 
@@ -74,7 +76,32 @@ function dataLoaded (err, data, metaData){
 
 function draw (root){	
 
+x.domain([0,width]);
+y.domain([0,height]);
+
+
 	console.log(root);
+/*
+    to add text:
+
+    select each slice
+    append text element to each slice
+      text element is based off of d.key
+      for leaves it is d.team
+    rotate each text element to match slice
+
+    use tween function to update text elements
+      change visibility to hide unshown nodes
+*/
+  svg.selectAll('.slice')
+    .data(sunburst.nodes(root), function(d){
+                  if (!d.children){ return d.team }
+                  else { return d.key }
+                    })
+    .enter()
+    .append('text')
+    
+
 
 
 /*	var nodes = sunburst.nodes({children: root});
@@ -102,7 +129,7 @@ console.log(nodes);*/
 		.on('click',click);
 
 	var text = svg.selectAll("text")
-		.data(sunburst.nodes(root))
+		.data(sunburst.nodes(root), function(d){return d.key})
     	.enter()
     	.append("text")
       	.style("fill-opacity", 1)
@@ -130,9 +157,36 @@ console.log(nodes);*/
       .text(function(d) { return d.depth ? d.team.split(" ")[1] || "" : ""; });
 
   function click(d) {
+      //console.log("Enter" + d.properties.NAME);
+      //show tooltip if hidden
+    d3.select('.tooltip')
+        .style('visibility','visible')
+    //find out where on the screen the tooltip needs to go
+
+
+    console.log(d);
+
+    //inject data into content of tooltip
+    var id = + function(d) {
+      console.log(d);
+
+      if (!d.key){ return d.team }
+        else{return d.key}
+    }   
+    
+
+    
+    customTooltip
+        .select('h2')
+        .html(d.team);
+    customTooltip
+        .select('span')
+        .html(d.value)
+
     slice.transition()
       .duration(duration)
       .attrTween("d", arcTween(d));
+;
 
 	text.style("visibility", function(e) {
           return isParentOf(d, e) ? null : d3.select(this).style("visibility");
@@ -169,6 +223,7 @@ function parse(d){
             team: d.TeamName,
             conference: d.Conference,
             division: d.Division,
+            gamesPlayed: +d.GP,
             wins: +d.Wins,
             goalsFor: +d.GF,
             goalsAgainst: +d.GA,
@@ -195,8 +250,9 @@ function parseMetaData(d){
 }
 
 function color(d){
+
+  console.log(d.children);
   if (d.children) {
-    // There is a maximum of two children!
     var colors = d.children.map(color),
         a = d3.hsl(colors[0]),
         b = d3.hsl(colors[1]);
@@ -238,5 +294,29 @@ function brightness(rgb) {
   return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
 }
 
+function onMouseEnter(d){
+    //console.log("Enter" + d.properties.NAME);
+  //show tooltip if hidden
+    d3.select('.custom-tooltip')
+        .style('visibility','visible')
+    //find out where on the screen the tooltip needs to go
 
+    var xy = d3.mouse(d3.select('.canvas').node());
+        customTooltip
+            .style('left',xy[0]+'px')
+            .style('top', xy[1]+'px');
 
+    //inject data into content of tooltip
+    var id = (+d.properties.STATE) + d.properties.COUNTY,   
+        rate = rateById.get(id);
+    
+
+    
+    customTooltip
+        .select('h2')
+        .html(d.properties.NAME);
+    customTooltip
+        .select('span')
+        .html(rate)
+
+}
