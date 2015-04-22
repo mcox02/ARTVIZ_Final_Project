@@ -18,6 +18,7 @@ body{
     width:1170px;
     margin:0 auto;
     padding:0;
+    position:relative;
 }
 .title{
 	width: 100%;
@@ -32,6 +33,7 @@ body{
 	border-bottom:2px solid #ccc;
 	height:50px;
 	padding: 0px 10px 0px 15px;
+	margin-bottom: 50px;
 	float: left;
 }
 	.nav-bar ul{
@@ -45,21 +47,38 @@ body{
 			text-align: center;
 		}
 .content {
-	top: 130px;
+	position:relative;
+	/*top: 130px;*/ 
 
 }
 	.content .canvas{
 		width:70%;
 		height: 700px;
-		top: inherit;
+		float:left;
+		/*top: inherit;*/
 		position: relative;
 	}
-	.content .tooltip{
-		width: 28%;
+	.content .depthBar{
+		width: 7%;
 		height:700px;
-		float: right;
+		float: left;
+		margin-right: 15px;
+		/*opacity: .25;*/
+	}
+		.content .depthBar .rect{
+			opacity: .25;
+			visibility: hidden;
+		}
+
+	.content .tooltip{
+		width: 20%;
+		height:700px;
+		float: left;
+		margin-top: 50px;
+		border-left: 2px solid #ccc;
+		padding-left: 15px;
 		position: relative;
-		top:-570px;
+/*		top:-570px;*/
 		opacity:1;
 		visibility: hidden;
 		color: #fff;
@@ -67,7 +86,7 @@ body{
 
 /*------------font-------------*/
 body{
-	font-family:Helvetica,Arial,sans-serif;
+	font-family:Roboto,Helvetica,Arial,sans-serif;
 	font-size: 16px;
     color:#fff;
 }
